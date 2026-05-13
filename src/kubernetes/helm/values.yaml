@@ -5,7 +5,8 @@ global:
 
 # Image pull secrets
 imagePullSecrets:
-  dockerconfigjson: ewoJImF1dGhzIjogewoJCSJnaGNyLmlvIjogewoJCQkiYXV0aCI6
+  # delete
+  dockerconfigjson: ewogICJhdXRocyI6IHsKICAgICJnaXRsYWIucHJha3Rpa3VtLXNlcnZpY2VzLnJ1OjUwNTAiOiB7CiAgICAgICJhdXRoIjogImEzVmlaWEpmWVhWMGFEcE5RV1UwTmtZemVIbGplWE5ZY0RKNVRGQnJjdz09IgogICAgfSwKICAgICJnaGNyLmlvIjogewogICAgICAiYXV0aCI6ICJUMlJrVDI1bFRVbFFWRHBuYVhSb2RXSmZjR0YwWHpFeFFWUktTRTFLV1RBM01uWTNUVlZMWVRkWmJtcGZXVVF6T0ZCb1FucEljSEphTmt4bVMwRmhiWFJNUlZGak1qUnhXalJ4ZUhCUVFYbzFXVFo1YzI1VlVEVlRWMEZKVFZkYVptSk5Ra2x2ZEZJPSIKICAgIH0KICB9LAogICJjcmVkc1N0b3JlIjogImRlc2t0b3AiLAogICJjcmVkSGVscGVycyI6IHsKICAgICJjb250YWluZXItcmVnaXN0cnkuY2xvdWQueWFuZGV4Lm5ldCI6ICJ5YyIsCiAgICAiY3IuY2xvdWQueWFuZGV4Lm5ldCI6ICJ5YyIsCiAgICAiY3IueWFuZGV4IjogInljIgogIH0sCiAgImN1cnJlbnRDb250ZXh0IjogImRlc2t0b3AtbGludXgiLAogICJwbHVnaW5zIjogewogICAgImRlYnVnIjogewogICAgICAiaG9va3MiOiAiZXhlYyIKICAgIH0sCiAgICAic2NvdXQiOiB7CiAgICAgICJob29rcyI6ICJwdWxsLGJ1aWxkeCBidWlsZCIKICAgIH0KICB9LAogICJmZWF0dXJlcyI6IHsKICAgICJob29rcyI6ICJ0cnVlIgogIH0KfQo=
 # Database configuration
 database:
   host: postgres
@@ -33,7 +34,7 @@ database:
 monolith:
   enabled: true
   image:
-    repository: ghcr.io/db-exp/cinemaabysstest/monolith
+    repository: ghcr.io/oddonemipt/architecture-pro-cinemaabyss/monolith
     tag: latest
     pullPolicy: Always
   replicas: 1
@@ -53,7 +54,7 @@ monolith:
 proxyService:
   enabled: true
   image:
-    repository: ghcr.io/db-exp/cinemaabysstest/proxy-service
+    repository: ghcr.io/oddonemipt/architecture-pro-cinemaabyss/proxy-service
     tag: latest
     pullPolicy: Always
   replicas: 1
@@ -73,7 +74,7 @@ proxyService:
 moviesService:
   enabled: true
   image:
-    repository: ghcr.io/db-exp/cinemaabysstest/movies-service
+    repository: ghcr.io/oddonemipt/architecture-pro-cinemaabyss/movies-service
     tag: latest
     pullPolicy: Always
   replicas: 1
@@ -93,7 +94,7 @@ moviesService:
 eventsService:
   enabled: true
   image:
-    repository: ghcr.io/db-exp/cinemaabysstest/events-service
+    repository: ghcr.io/oddonemipt/architecture-pro-cinemaabyss/events-service
     tag: latest
     pullPolicy: Always
   replicas: 1
@@ -113,7 +114,7 @@ eventsService:
 kafka:
   enabled: true
   image:
-    repository: wurstmeister/kafka
+    repository: medinvention/kafka
     tag: 2.13-2.7.0
     pullPolicy: IfNotPresent
   replicas: 1
@@ -143,7 +144,7 @@ kafka:
 zookeeper:
   enabled: true
   image:
-    repository: wurstmeister/zookeeper
+    repository: arm64v8/zookeeper
     tag: latest
     pullPolicy: IfNotPresent
   replicas: 1

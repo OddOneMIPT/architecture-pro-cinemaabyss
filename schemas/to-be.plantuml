@@ -1,0 +1,62 @@
+@startuml
+title CinemaAbyss Container diagram
+
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Deployment.puml
+
+Person(User, "Пользователь", "Пользователь онлайн сервиса")
+
+Container_Boundary(ExternalSystems, "Внешние системы") {
+    System_Ext(RecommendationSystem, "Внешняя рекомендательная система", "Рекомендации, подборки")
+    System_Ext(PaymentSystem, "Внешняя платежная система", "Обработка платежей")
+    System_Ext(OnlineCinema, "Онлайн-кинотеатры", "Стриминг фильмов")
+}
+
+System(CinemaAbyss, "Кинобездна", "Стриминговый сервис")
+
+Container_Boundary(CinemaAbyss, "Kubernetes Cluster (prod)"){
+    Deployment_Node(k8s, "Kubernetes Cluster") {
+        Container(ProxyService, "Proxy API Gateway", "Kong, NGINX",  "Аутентификация, роутинг, канареечные релизы")
+
+        Container(WebPlatform, "Веб платформа + BFF Агрегация данных для веб-клиента", "Javascript, NodeJs", "Вебсайт платформы" )
+        Container(MobilePlatform, "Мобильное приложение + BFF Агрегация данных для мобильных клиентов", "Go", "Телефон, планшет")
+        Container(StreamingPlatform, "Стриминг платформа + BFF Агрегация данных для стриминга", "Nodejs", "Smart TV, Smart TV-приставка")
+
+        Container_Boundary(Microservices, "Новые микросервисы"){
+            Container(AuthService, "Сервис Авторизации", "Go", "Аутентификация, идентификация, токены")
+            Container(UserService, "Сервис Пользователей", "Go", "Профили пользователей")
+            Container(MoviesService, "Сервис метаданные фильмов", "Go", "Метаданные: актеры, жанры")
+            Container(SubscriptionService, "Сервис Подписок", "Go", "Подписки, скидки")
+            SystemDb(MoviesDB, "БД сервиса метаданные фильмов", "Postgres")
+            SystemDb(SubscriptionsDB, "БД сервиса подписки", "Postgres")
+            SystemDb(UsersDB, "БД сервиса Пользователей", "Postgres")
+        }
+        
+        Container(Kafka, "Kafka шина данных", "Kafka Cluster", "Общение между сервисами событиями")
+
+        Container_Boundary(ACLMonolith, "Anti-Corruption Layer"){
+            Container(MonolithSystem, "Монолит", "Легаси код, в эксплутации")
+            SystemDb(MonolithDB, "БД монолита", "Единая база данных (старая)")
+        }        
+    }
+}
+
+Rel(User, WebPlatform, "Взаимодействие с платформой", "HTTPS, websockets")
+Rel(User, MobilePlatform, "Взаимодействие с платформой", "HTTPS, websockets")
+Rel(User, StreamingPlatform, "Взаимодействие с платформой", "HTTPS, websockets")
+Rel(WebPlatform, ProxyService, "Маршрутизация", "HTTP, websockets")
+Rel(MobilePlatform, ProxyService, "Маршрутизация", "HTTP, websockets")
+Rel(StreamingPlatform, ProxyService, "Маршрутизация", "HTTP, websockets")
+Rel(MonolithSystem, MonolithDB, "Чтение/запись")
+Rel(MoviesService, MoviesDB, "Чтение/запись")
+Rel(SubscriptionService, SubscriptionsDB, "Чтение/запись")
+Rel(ProxyService, ACLMonolith, "Постепенное сокращение трафика")
+Rel(ProxyService, Microservices, "Проксирование запросов", "HTTP", "На самом деле идет прямое взаимодествие с необходимым сервисом")
+Rel(UserService, UsersDB, "Чтение/запись")
+Rel(ACLMonolith, ExternalSystems, "Запрос внешних систем", "HTTP")
+Rel(ProxyService, ExternalSystems, "Проксирование запроса внешних систем", "HTTP")
+Rel(Kafka, MoviesService, "Обмен событиями", "Kafka")
+Rel(Kafka, SubscriptionService, "Обмен событиями", "Kafka")
+Rel(Kafka, AuthService, "Обмен событиями", "Kafka")
+Rel(Kafka, UserService, "Обмен событиями", "Kafka")
+
+@enduml
